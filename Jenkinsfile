@@ -2,6 +2,13 @@ pipeline {
     agent any
 
     stages {
+        stage('Verify Docker') {
+            steps {
+                // Verificar que Docker esté instalado y accesible
+                sh 'docker --version'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Clonar el repositorio desde Git
@@ -28,9 +35,11 @@ pipeline {
 
     post {
         always {
-            // Detener y eliminar el contenedor cuando finalice el pipeline
-            sh 'docker stop mysql-db || true'
-            sh 'docker rm mysql-db || true'
+            // Limpiar el contenedor, detenerlo y eliminarlo después de que finalice el pipeline
+            script {
+                sh 'docker stop mysql-db || true'
+                sh 'docker rm mysql-db || true'
+            }
         }
     }
 }
